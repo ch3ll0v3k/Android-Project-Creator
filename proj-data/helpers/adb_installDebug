@@ -1,0 +1,3 @@
+#!/bin/bash
+
+adb -d install -rt ./build/outputs/apk/CLASS_NAME-debug.apk

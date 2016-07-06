@@ -1,0 +1,263 @@
+#!/usr/bin/python
+# #############################################################################################
+import sys, os, optparse
+
+from modules.ArgParser import ArgParser
+
+
+# #############################################################################################
+class AndroidProject(object):
+
+    # ==========================================================================
+    def __init__(self):
+
+        # --------------------------------------------------------------
+        self.ArgParser                          = ArgParser(); 
+
+        if not self.ArgParser.AcceptSettings():
+            print("---------------------------------------------------");
+            self.ArgParser.PRINT_HELP();
+            exit();
+
+        # --------------------------------------------------------------
+        self.ANDROID                            = "/m-sys/prog/android/android-sdk/tools/android ";
+        self.SDK_MANAGER                        = "/m-sys/prog/android/android-sdk/tools/android sdk ";
+        self.ADB                                = "/m-sys/prog/android/android-sdk/tools/android/platform-tools/adb ";
+        self.ROOT                               = "/m-sys/prog/android/tmx-tools/Android-Project";
+
+        # --------------------------------------------------------------
+        self.PROJ_DATA                          = self.ROOT+"/proj-data";
+        self.PROJ_HELPERS                       = self.PROJ_DATA+"/helpers"; # assembleDebug ....
+        self.PROJ_LIBS                          = self.PROJ_DATA+"/libs";
+        self.PROJ_RES                           = self.PROJ_DATA+"/res";
+        self.ANDROID_MANIFEST                   = self.PROJ_DATA+"/AndroidManifest.xml";
+        self.ANDROID_TPL_CLASS                  = self.PROJ_DATA+"/TEMPLATE.java";
+        self.BUILD_GRADLE_CNF                   = self.PROJ_DATA+"/build.gradle";
+        self.PROGUARD_RULES_PRO                 = self.PROJ_DATA+"/proguard-rules.pro";
+        
+        # --------------------------------------------------------------
+        self.JAVA_PACKAGE_PATH                  = "src/main/java/";
+
+        self.SHELL_CMD                          = "";
+        self.ASSEMBLE_DEBUG                     = False;
+        self.PACKAGE_NAME                       = "";
+        self.MIN_SDK                            = None;
+        self.TARGET_SDK                         = None;
+        self.APP_NAME                           = "";
+
+        # --------------------------------------------------------------
+        self.PLACEHOLDER_CLASS_NAME             = "CLASS_NAME";
+        self.PLACEHOLDER_PACKAGE_NAME           = "PACKAGE_NAME";
+
+        # --------------------------------------------------------------
+        self.CONFIGURE_PROJECT();
+
+        # --------------------------------------------------------------
+        
+    # ==========================================================================
+    def CONFIGURE_PROJECT(self):
+
+        # --------------------------------------------------------------
+        self.PROJECT_TYPE   = str(self.ArgParser.OPTS.type); 
+        self.APP_NAME       = str(self.ArgParser.OPTS.name);
+        self.MIN_SDK        = str(self.ArgParser.OPTS.min_sdk);
+        self.TARGET_SDK     = str(self.ArgParser.OPTS.target_sdk);
+        self.PACKAGE_NAME   = str(self.ArgParser.OPTS.package)+"."+self.APP_NAME;
+        self.ASSEMBLE_DEBUG = self.ArgParser.OPTS.compile;
+
+        # --------------------------------------------------------------
+        self.SHELL_CMD      += self.ANDROID;
+        self.SHELL_CMD      += " create "+self.PROJECT_TYPE+" ";
+        self.SHELL_CMD      += ' --target "android-'+self.TARGET_SDK+'"';
+        self.SHELL_CMD      += " --name "+self.APP_NAME;
+        self.SHELL_CMD      += " --path ./"+self.APP_NAME+"/";
+        self.SHELL_CMD      += " --activity "+self.APP_NAME;
+        self.SHELL_CMD      += " --package "+self.PACKAGE_NAME;
+        self.SHELL_CMD      += " --gradle";
+        self.SHELL_CMD      += " --gradle-version 1.5.0";
+
+        # --------------------------------------------------------------
+        _PATH = self.PACKAGE_NAME.split(".");
+        
+        for _path in _PATH:
+            self.JAVA_PACKAGE_PATH += _path+"/";
+
+        # --------------------------------------------------------------
+        self.CREATE_PROJECT();
+        # --------------------------------------------------------------
+
+
+    # ==========================================================================
+    def CREATE_PROJECT(self):
+
+        # --------------------------------------------------------------
+        print("--------------------------------------------------------------");
+        print(" ./android [ 'create', 'project' ]\n");
+
+        os.system( self.SHELL_CMD );
+        
+        print("--------------------------------------------------------------");
+        print(" Gradle: [ 'changing', 'versions' ]");
+
+        self.OS_SED("gradle-1.12-all.zip", "gradle-2.2-all.zip", self.APP_NAME+"/gradle/wrapper/gradle-wrapper.properties");
+
+        print("--------------------------------------------------------------");
+        print(" Gradle: [ 'Create', 'build.gradle' ]");
+
+        self.OS_CP( self.BUILD_GRADLE_CNF, self.APP_NAME+"/");
+        self.OS_SED("\"\[TARGET-SDK-VERSION\]\"", self.TARGET_SDK, self.APP_NAME+"/build.gradle");
+        self.OS_SED("\"\[MIN-SDK-VERSION\]\"", self.MIN_SDK, self.APP_NAME+"/build.gradle");
+        self.OS_SED("\[APPLICATION_ID\]", self.PACKAGE_NAME, self.APP_NAME+"/build.gradle");
+
+        print("--------------------------------------------------------------");
+        print(" Create: [ ./assemble[ Debug,Release ] helper ]");
+
+        self.OS_CP( self.PROJ_HELPERS+"/assemble", self.APP_NAME+"/");
+        self.OS_CP( self.PROJ_HELPERS+"/assembleDebug", self.APP_NAME+"/");
+        self.OS_CP( self.PROJ_HELPERS+"/assembleRelease", self.APP_NAME+"/");
+
+        print(" Create: [ './clean' helper ]");
+        self.OS_CP( self.PROJ_HELPERS+"/clean", self.APP_NAME+"/");
+
+        print(" Create: [ './checkSource' helper ]");
+        self.OS_CP( self.PROJ_HELPERS+"/checkSource", self.APP_NAME+"/");
+
+        print(" Create: [ './adb_installDebug' helper ]");
+        self.OS_CP( self.PROJ_HELPERS+"/adb_installDebug", self.APP_NAME+"/");
+        self.OS_SED( self.PLACEHOLDER_CLASS_NAME, self.APP_NAME, self.APP_NAME+"/adb_installDebug");
+
+        print(" Create: [ './adb_logcat' helper ]");
+        self.OS_CP( self.PROJ_HELPERS+"/adb_logcat", self.APP_NAME+"/");
+        self.OS_SED( self.PLACEHOLDER_CLASS_NAME, self.APP_NAME, self.APP_NAME+"/adb_logcat");
+
+        """
+        print("--------------------------------------------------------------");
+        print(" Create: [ "+self.APP_NAME+"/libs & cp ./libs/*.jar "+self.APP_NAME+"/libs/ ]");
+
+        self.OS_CP( self.PROJ_LIBS+" "+self.APP_NAME );
+
+        """
+
+        print("--------------------------------------------------------------");
+        print(" Initit: [ MainClass ] ");
+
+        self.OS_CP(  self.ANDROID_TPL_CLASS, self.APP_NAME+"/"+self.JAVA_PACKAGE_PATH+self.APP_NAME+".java" );
+        self.OS_SED( self.PLACEHOLDER_CLASS_NAME, self.APP_NAME, self.APP_NAME+"/"+self.JAVA_PACKAGE_PATH+self.APP_NAME+".java");
+        self.OS_SED( self.PLACEHOLDER_PACKAGE_NAME, self.PACKAGE_NAME, self.APP_NAME+"/"+self.JAVA_PACKAGE_PATH+self.APP_NAME+".java");
+
+        print("--------------------------------------------------------------");
+        print(" Initit: [ AndroidManifest.xml ]");
+
+        self.OS_CP( self.ANDROID_MANIFEST, self.APP_NAME+"/src/main/" );
+
+        self.OS_SED( self.PLACEHOLDER_CLASS_NAME, self.APP_NAME, self.APP_NAME+"/src/main/AndroidManifest.xml");
+        self.OS_SED( self.PLACEHOLDER_PACKAGE_NAME, self.PACKAGE_NAME, self.APP_NAME+"/src/main/AndroidManifest.xml");
+        self.OS_SED( "\[TARGET-SDK-VERSION\]",  self.TARGET_SDK, self.APP_NAME+"/src/main/AndroidManifest.xml");
+        self.OS_SED( "\[MIN-SDK-VERSION\]", self.MIN_SDK, self.APP_NAME+"/src/main/AndroidManifest.xml");
+
+        print("--------------------------------------------------------------");
+        print(" Initit: [ proguard-rules.pro ]");
+
+        self.OS_CP( self.PROGUARD_RULES_PRO, self.APP_NAME+"/" );
+
+        print("--------------------------------------------------------------");
+        print(" Initit: [ resources ]");
+
+        self.OS_CP( self.PROJ_RES, self.APP_NAME+"/src/main/" );
+
+        self.OS_SED( self.PLACEHOLDER_CLASS_NAME, self.APP_NAME, self.APP_NAME+"/src/main/res/values/strings.xml");
+        self.OS_SED( self.PLACEHOLDER_CLASS_NAME, self.APP_NAME, self.APP_NAME+"/src/main/res/menu/main.xml");
+
+        print("--------------------------------------------------------------");
+        print(" Delete: [ drawable-[ldpi, mdpi, hdpi, xhdpi] ]");
+
+        self.OS_RM( self.APP_NAME+"/src/main/res/drawable-ldpi");
+        self.OS_RM( self.APP_NAME+"/src/main/res/drawable-mdpi");
+        self.OS_RM( self.APP_NAME+"/src/main/res/drawable-hdpi");
+        self.OS_RM( self.APP_NAME+"/src/main/res/drawable-xhdpi");
+
+        if self.ASSEMBLE_DEBUG:
+
+            print("==================================================================");
+            print(" Runn: [ ./assembleDebug ]\n");
+
+            self.OS_CMD( "cd "+self.APP_NAME+"/ && ./assembleDebug " );
+
+            print("==================================================================");
+        
+        print("--------------------------------------------------------------");
+        print(" Done\n\n");
+        
+        #os.system( "cd "+os.path.dirname(os.path.abspath(__file__))+"/"+self.APP_NAME+"/ && ./gradlew assemble" );
+        # --------------------------------------------------------------
+
+    # ==========================================================================
+    def OS_SED( self, _this, _by_this, _in_file):
+
+        # --------------------------------------------------------------
+        try:
+
+            os.system(" sed -i 's/"+_this+"/"+_by_this+"/g' "+_in_file+" ");
+
+        except Exception as _os_cmd_error:
+            print(_os_cmd_error);
+        # --------------------------------------------------------------
+
+    # ==========================================================================
+    def OS_CP( self, _from, _to):
+
+        # --------------------------------------------------------------
+        try:
+
+            os.system( "cp -r "+_from+" "+_to  );
+
+        except Exception as _os_cmd_error:
+            print(_os_cmd_error);
+        # --------------------------------------------------------------
+
+    # ==========================================================================
+    def OS_RM( self, _this):
+
+        # --------------------------------------------------------------
+        try:
+
+            os.system( " rm -rf "+_this  );
+
+        except Exception as _os_cmd_error:
+            print(_os_cmd_error);
+        # --------------------------------------------------------------
+
+    # ==========================================================================
+    def OS_CMD( self, _cmd ):
+
+        # --------------------------------------------------------------
+        try:
+
+            os.system( _cmd  );
+    
+        except Exception as _os_cmd_error:
+
+            print(_os_cmd_error);
+        # --------------------------------------------------------------
+
+    # ==========================================================================
+    def OS_MKDIR( self, _dir_name ):
+
+        # --------------------------------------------------------------
+        try:
+
+            os.system( "mkdir "+_dir_name  );
+    
+        except Exception as _os_cmd_error:
+
+            print(_os_cmd_error);
+        # --------------------------------------------------------------
+
+    # ==========================================================================
+
+
+# #############################################################################################
+if __name__ == '__main__':
+    
+    _AndroidProject = AndroidProject();
+

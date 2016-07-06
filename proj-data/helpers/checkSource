@@ -1,0 +1,41 @@
+#!/bin/bash
+# ---------------------------------------
+./gradlew --continue \
+-x test \
+-x compileDebugNdk \
+-x compileDebugAidl \
+-x compileDebugRenderscript \
+-x prepareComAndroidSupportAppcompatV71910Library \
+-x prepareDebugDependencies \
+-x generateDebugBuildConfig \
+-x generateDebugAssets \
+-x generateDebugResValues \
+-x generateDebugResources \
+-x generateDebugSources \
+-x preBuild \
+-x preDebugBuild \
+-x checkDebugManifest \
+-x preReleaseBuild \
+-x mergeDebugAssets \
+-x mergeDebugResources \
+-x processDebugManifest \
+-x processDebugResources \
+-x transformClassesWithDexForDebug \
+-x mergeDebugJniLibFolders \
+-x transformNative_libsWithMergeJniLibsForDebug \
+-x processDebugJavaRes \
+-x transformResourcesWithMergeJavaResForDebug \
+-x validateDebugSigning \
+-x packageDebug \
+-x zipalignDebug \
+-x lintVitalDebug \
+assembleDebug
+# ---------------------------------------
+exit
+# ---------------------------------------
+
+
+#assembleDebug
+# -x assembleDebug \
+# -x compileDebugSources \
+#######################################################################################

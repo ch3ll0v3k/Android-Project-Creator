@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <menu 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".CLASS_NAME">
+    <!--
+    https://developer.android.com/guide/topics/ui/menus.html
+
+    -->
+    <!-- ########################################################################## -->
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/menu_settings"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom|withText">
+
+        <menu>
+            <!--
+            <group android:id="@+id/group2" android:checkableBehavior="single">
+            -->
+                <item
+                    android:id="@+id/menu_settings_a"
+                    android:icon="@drawable/menu_sub"
+                    android:title="B_A"
+                    android:orderInCategory="100"
+                    app:showAsAction="ifRoom|withText" />
+
+                <item
+                    android:id="@+id/menu_settings_b"
+                    android:icon="@drawable/menu_sub"
+                    android:orderInCategory="100"
+                    android:title="B_B"
+                    app:showAsAction="ifRoom|withText" />
+
+                <item
+                    android:id="@+id/menu_settings_c"
+                    android:icon="@drawable/menu_sub"
+                    android:title="B_C"
+                    android:orderInCategory="100"
+                    app:showAsAction="ifRoom|withText" />
+            <!--
+            </group>
+            -->
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_main"
+        android:icon="@drawable/menu_main"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom|withText">
+
+        <menu>
+            <!--
+            <group android:id="@+id/group2" android:checkableBehavior="single">
+            -->
+                <item
+                    android:id="@+id/menu_main_a"
+                    android:icon="@drawable/menu_sub"
+                    android:title="A_A"
+                    android:orderInCategory="100"
+                    app:showAsAction="ifRoom|withText" />
+
+                <item
+                    android:id="@+id/menu_main_b"
+                    android:icon="@drawable/menu_sub"
+                    android:orderInCategory="100"
+                    android:title="A_B"
+                    app:showAsAction="ifRoom|withText" />
+
+                <item
+                    android:id="@+id/menu_main_c"
+                    android:icon="@drawable/menu_sub"
+                    android:title="A_C"
+                    android:orderInCategory="100"
+                    app:showAsAction="ifRoom|withText" />
+            <!--
+            </group>
+            -->
+        </menu>
+    </item>
+
+    <!-- ########################################################################## -->
+</menu>

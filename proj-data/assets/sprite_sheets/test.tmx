@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="isometric" width="10" height="10" tilewidth="64" tileheight="32">
+ <tileset firstgid="1" name="ground" tilewidth="64" tileheight="32">
+  <image source="grassland.png" width="1024" height="1344"/>
+ </tileset>
+ <layer name="ground" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYmBgYCIDs2DBxKghRq0mEH8DYiUCdisCsSUQGxEwD6TOEIg9cZjHDsQ/kdQ5ArEaElZCw4FI6szQsBEaToSqA9njhoad0HAhEAMA7qgLJg==
+  </data>
+ </layer>
+ <layer name="bilds" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAe9BChphNKzwHiGAJqZ0LpbCDOIdIN1UBcQ6TaoQgA9xQEdQ==
+  </data>
+ </layer>
+ <layer name="trees" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYICAr4wQmo2JASuIQxJnhbLFcKjNQxIXhbLV0NTmQvl1SOKqWMzbBMS1UPE+HPaBwFoo7oWqmQelt6KpWw/E+6HsuUhq0NUNFAAAN0MLuQ==
+  </data>
+ </layer>
+</map>

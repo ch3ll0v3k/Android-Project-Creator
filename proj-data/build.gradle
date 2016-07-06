@@ -1,0 +1,307 @@
+// ==============================================================================
+/*
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return formattedDate
+}
+allprojects{}, add: 'version = "0.1-build-" + getDate()'
+
+*/
+// ==============================================================================
+buildscript {
+
+    // -----------------------------------------------------------
+    repositories {
+        jcenter()
+    }
+    // -----------------------------------------------------------
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+    }
+    // -----------------------------------------------------------
+
+}
+
+// ==============================================================================
+allprojects {
+
+    // -----------------------------------------------------------
+    repositories {
+        jcenter()
+    }
+    // -----------------------------------------------------------
+
+}
+
+// ==============================================================================
+//apply plugin: 'android'
+//apply plugin: 'com.android.library'
+//apply plugin: 'android-reporting'
+
+
+// -> activate the usage of databinding
+apply plugin: 'com.android.application'
+//apply plugin: 'findbugs'
+
+// ==============================================================================
+android {
+
+    // -----------------------------------------------------------
+    /*
+    lintOptions {
+        // turn off checking the given issue id's
+        disable 'TypographyFractions','TypographyQuotes'
+
+        // turn on the given issue id's
+        enable 'RtlHardcoded','RtlCompat', 'RtlEnabled'
+
+        // check *only* the given issue id's
+        check 'NewApi', 'InlinedApi'
+
+        abortOnError false
+
+    }
+    */
+    // -----------------------------------------------------------
+    compileSdkVersion "[TARGET-SDK-VERSION]"
+    buildToolsVersion '23.0.2'
+    // -----------------------------------------------------------
+    signingConfigs {
+
+        debugConfig {
+
+            storeFile file("/m-sys/prog/android/tmx-tools/Android-Project/keystore/org.ch3ll0v3k.keystore");
+            storePassword ("SfselzefZEFzefze342523sdfgDSFSDFV");
+            keyAlias ("org.ch3ll0v3k.debug.key");
+            keyPassword ("fz45sefZFzrdfggSF45SDs63456");
+        }
+
+        releaseConfig {
+
+            storeFile file("/m-sys/prog/android/tmx-tools/Android-Project/keystore/org.ch3ll0v3k.keystore");
+            storePassword ("SfselzefZEFzefze342523sdfgDSFSDFV");
+            keyAlias ("org.ch3ll0v3k.release.key");
+            keyPassword ("SDsfzefZFzrgSF456345645sdfg");
+        }
+    }
+
+    // -----------------------------------------------------------
+    defaultConfig {
+        applicationId ("[APPLICATION_ID]");
+        minSdkVersion "[MIN-SDK-VERSION]";
+        targetSdkVersion "[TARGET-SDK-VERSION]";
+        versionCode 1;
+        versionName "1.0";
+
+        /*
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testHandleProfiling true
+        testFunctionalTest true
+        */
+
+    }
+
+    // -----------------------------------------------------------
+    buildTypes {
+
+        // http://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html
+
+        debug {
+
+
+            debuggable true;
+            //minifyEnabled true;
+            //multiDexEnabled false;
+            shrinkResources false;
+            applicationIdSuffix ".debug"; // <- To be able install Releas and debug version onsame time/machine
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro';
+            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro';
+            //proguardFile 'some-other-rules.txt'
+
+            signingConfig signingConfigs.debugConfig;
+        }
+
+        // -----------------------------------------------
+        release {
+
+            debuggable false;
+            minifyEnabled true;
+            shrinkResources true;
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro';
+            applicationIdSuffix "";
+
+            signingConfig signingConfigs.releaseConfig;
+        }
+
+        // -----------------------------------------------
+        /* jnidebug {
+            initWith(buildTypes.debug)
+            applicationIdSuffix ".jnidebug"
+            jniDebuggable true
+        } */
+
+        // -----------------------------------------------
+        /* sourceSets {
+            main{
+                res{
+
+                    srcDirs = ['src/main/res', 'src/main/dot']
+
+                }
+            }
+        } */
+        // -----------------------------------------------
+    }
+    // -----------------------------------------------------------
+}
+
+// ==============================================================================
+dependencies {
+
+    // -----------------------------------------------------------
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:19.1.0' // (19.1.0)
+    //compile fileTree(dir: 'HelloGradle/libs', include: '*.jar', exclude: '**/android-support-v4.jar')
+    //testCompile 'junit:junit:4.12'
+    /* /m-sys/prog/android/android-sdk/extras/android/m2repository/com/android/support/appcompat-v7/
+    [
+    18.0.0, 19.0.0, 19.0.1, 19.1.0, 20.0.0, 21.0.0, 21.0.2, 21.0.3, 22.0.0,
+    22.1.0, 22.1.1, 22.2.0, 22.2.1, 23.0.0, 23.0.1, 23.1.0, 23.1.1, 23.2.0
+    ]
+    */
+    // -----------------------------------------------------------
+    /*
+    compile:            main application
+    androidTestCompile: test application
+    debugCompile:       debug Build Type
+    releaseCompile:     release Build Type.
+
+    */
+    // -----------------------------------------------------------
+
+}
+// ==============================================================================
+/*
+task customFindbugs(type: FindBugs) {
+
+    ignoreFailures = false
+    effort = "max"
+    reportLevel = "low"
+    classes = files("$project.buildDir/intermediates/classes")
+    //Use this only if you want exclude some errors
+    excludeFilter = file("$rootProject.rootDir/config/findbugs/exclude.xml")
+
+    source = fileTree('src/main/java/')
+    classpath = files()
+
+    reports {
+        xml.enabled = false
+        xml.withMessages = true
+        html.enabled = !xml.isEnabled()
+        xml.destination "$project.buildDir/outputs/findbugs/findbugs-output.xml"
+        html.destination "$project.buildDir/outputs/findbugs/findbugs-output.html"
+    }
+}
+
+build.dependsOn customFindbugs
+assembleDebug.dependsOn customFindbugs
+*/
+// ==============================================================================
+/*
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "maven"
+apply plugin: "findbugs"
+apply plugin: "pmd"
+
+def defaultEncoding = 'UTF-8'
+[compileJava, compileTestJava]*.options*.encoding = defaultEncoding
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+group = 'com.mychaelstyle'
+archivesBaseName = 'MyLibs'
+version = '0.1.0'
+
+repositories {
+  mavenCentral()
+  maven {
+    url 'file:'+System.getenv('HOME')+'/.m2/repository'
+  }
+}
+
+dependencies {
+  testCompile "junit:junit:4.11"
+  compile 'log4j:log4j:1.2.17'
+  runtime fileTree(dir: 'libs', include: '*.jar')
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      file(System.getenv('HOME')+'/.m2/repository').mkdirs()
+      repository(url: 'file:'+System.getenv('HOME')+'/.m2/repository')
+    }
+  }
+}
+
+jar {
+  manifest {
+    attributes 'Implementation-Title': 'MyLibs', 'Implementation-Version': 0.1
+    attributes "Main-Class" : "com.mychaelstyle.Main"
+  }
+  from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+task writePom << {
+  pom {
+    project {
+      inceptionYear '2014'
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
+    }
+  }.writeTo("$projectDir/pom.xml")
+}
+
+findbugs {
+  ignoreFailures = true
+  toolVersion = "2.0.1"
+  sourceSets = [sourceSets.main]
+  reportsDir = file("$project.buildDir/reports/findbugs")
+  effort = "max"
+}
+
+pmd {
+  ignoreFailures = true
+  sourceSets = [sourceSets.main]
+  reportsDir = file("$project.buildDir/reports/pmd")
+  ruleSets = [
+    "basic",
+    "braces"
+  ]
+}
+// add CPD to check
+check << {
+  File outDir = new File('build/reports/pmd/')
+  outDir.mkdirs()
+  ant.taskdef(name: 'cpd', classname: 'net.sourceforge.pmd.cpd.CPDTask',
+    classpath: configurations.pmd.asPath)
+  ant.cpd(minimumTokenCount: '100', format: 'xml',
+    outputFile: new File(outDir , 'cpd.xml')) {
+    fileset(dir: "src/main/java") {
+      include( n a m e :   ' * * / * . j a v a ')
+    }
+  }
+}
+// gradle wrapper
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.9'
+}
+*/
+// ==============================================================================

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+adb shel monkey -p org.ch3ll0v3k.HashDroid.debug -c android.intent.category.LAUNCHER 1

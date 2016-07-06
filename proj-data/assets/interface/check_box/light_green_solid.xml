@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:state_enabled="true" android:state_checked="true" android:drawable="@drawable/light_green_solid_on_on" />
+    <item android:state_enabled="true" android:state_checked="false" android:drawable="@drawable/light_green_solid_on_off" />
+
+    <item android:state_enabled="false" android:state_checked="true" android:drawable="@drawable/light_green_solid_off_on" />
+    <item android:state_enabled="false" android:state_checked="false" android:drawable="@drawable/light_green_solid_off_off" />
+
+    <item android:state_enabled="true" android:state_checked="true" android:state_pressed="true" 
+        android:drawable="@drawable/light_green_solid_on_on_pressed"/>
+
+    <item android:state_enabled="false" android:state_checked="false" android:state_pressed="true" 
+        android:drawable="@drawable/light_green_solid_off_off_pressed"/>
+
+    <!-- default --> 
+    <item android:drawable="@drawable/light_green_solid_on_off" /> 
+</selector>
+
+
+
+<CheckBox 
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content" 
+    android:layout_gravity="right"
+    android:checked="true"
+    android:layout_weight="1"
+    android:padding="5dp" 
+    android:button="@drawable/light_green_solid"/>
+
+
+
+
+<!--
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:constantSize=["true" | "false"]
+    android:dither=["true" | "false"]
+    android:variablePadding=["true" | "false"] >
+    <item
+        android:state_pressed=["true" | "false"]
+        android:drawable="@[package:]drawable/drawable_resource"
+        android:state_focused=["true" | "false"]
+        android:state_hovered=["true" | "false"]
+        android:state_selected=["true" | "false"]
+        android:state_checkable=["true" | "false"]
+        android:state_checked=["true" | "false"]
+        android:state_enabled=["true" | "false"]
+        android:state_activated=["true" | "false"]
+        android:state_window_focused=["true" | "false"] />
+</selector>
+
+-->
